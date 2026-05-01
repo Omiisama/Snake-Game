@@ -1,3 +1,22 @@
+let btn =document.querySelector("#confirmbtn");
+let username = "playerName" ;
+let introScreen = document.querySelector("#startScreen")
+let flexBox = document.querySelector(".content")
+let alertBox=document.createElement("h3")
+alertBox.innerHTML=`<h3>Please enter a username to continue!</h3>`
+let gameStarted=false;
+btn.addEventListener("click", function(){
+    username = document.querySelector("#username").value.trim();
+    if(username != ""){
+        introScreen.style.display = "none"; //removes the introscreen
+        gameStarted=true;
+    }
+    else{
+        flexBox.append(alertBox);
+
+    }
+
+})
 
 scoreSent = false; //is score sent to flask?
 let causeOfDeath;
@@ -16,10 +35,9 @@ function gameLoop(timestamp){
 
     //shake screen at gameOver
     if(shakeTime > 0){
-        let progress = shakeTime / shakeDuration;
         //shakes in the direction of collision
-        Xoffset = (canvas.width - cols*gridSize)/2 + (dx * Math.random()) * 15 * progress;
-        Yoffset = (canvas.height - rows*gridSize)/2 + (dy * Math.random()) * 15 * progress;
+        Xoffset = (canvas.width - cols*gridSize)/2 + (dx * (Math.random()/2 + 0.5)) * 0.5 * gridSize;
+        Yoffset = (canvas.height - rows*gridSize)/2 + (dy * (Math.random()/2 + 0.5)) * 0.5 * gridSize;
 
         shakeTime -= deltaTime;
     }
@@ -61,7 +79,7 @@ function gameLoop(timestamp){
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    name: "Player",
+                    name: username,
                     score: score,
                     duration: Math.round(duration/1000),
                     speed: speed[speedIndex].name,

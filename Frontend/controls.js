@@ -1,6 +1,6 @@
 document.addEventListener("keydown", (e) => {
     //controlling direction
-    if(gameState === "playing" || true){
+    if(true){
         let newDir = null;
         if(e.key === "ArrowUp" || e.key === "w") newDir = "U";
         if(e.key === "ArrowDown" || e.key === "s") newDir = "D";
@@ -16,7 +16,7 @@ document.addEventListener("keydown", (e) => {
     }
 
     //starting the game
-    if(gameState === "menu" && e.key === "Enter"){ 
+    if(gameState === "menu" && e.key === "Enter" && gameStarted){ 
         resetGame();
         gameState="playing"; 
     }
@@ -43,6 +43,7 @@ document.addEventListener("keydown", (e) => {
     //quitting game
     else if(gameState === "playing" && e.key === "q"){
         gameState="gameOver";
+        causeOfDeath="QUIT";
     }
 });
 

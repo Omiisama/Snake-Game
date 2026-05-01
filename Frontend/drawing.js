@@ -15,13 +15,16 @@ function displayBoard(){
 }
 
 //displaying food
-function displayFood(food){
-    let centerX = Xoffset + food.x * gridSize + gridSize/2;
-    let centerY = Yoffset + food.y * gridSize + gridSize/2;
+function displayApple(){
+    if(!food[0].active) return;
+
+    let centerX = Xoffset + food[0].x * gridSize + gridSize/2;
+    let centerY = Yoffset + food[0].y * gridSize + gridSize/2;
 
     let pulse = Math.sin(time * 0.005) * 0.1; // smooth animation
     let radius = gridSize * (0.4 + pulse);
 
+    //drawing apple
     ctx.save();
     
     ctx.shadowBlur=20;
@@ -46,6 +49,81 @@ function displayFood(food){
     ctx.fill();
 
     ctx.restore();
+}
+function displayPie(){
+    if (!food[1].active) return; 
+
+    let centerX = Xoffset + food[1].x * gridSize + gridSize/2;
+    let centerY = Yoffset + food[1].y * gridSize + gridSize/2;
+
+    // Pulse rapidly if < 2 seconds left
+    let pulseSpeed = food[1].timer < 2000 ? 0.03 : 0.005;
+    let pulse = Math.sin(time * pulseSpeed) * 0.1; 
+    let radius = gridSize * (0.4 + pulse);
+
+    ctx.save();
+    ctx.shadowBlur = 20;
+
+     // pie
+    ctx.shadowColor = "rgb(160, 70, 20)";
+    ctx.fillStyle = "rgb(195, 85, 35)";
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // crust  
+    ctx.shadowColor = "rgb(150, 90, 40)";
+    ctx.strokeStyle = "rgb(175, 105, 45)";
+    ctx.lineWidth = radius * 0.12;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius - radius * 0.06, 0, Math.PI * 2);
+    ctx.stroke();
+
+    //  cream  
+    ctx.shadowColor = "rgba(200, 190, 160, 0.4)";
+    ctx.fillStyle = "rgb(255, 252, 240)";
+    ctx.beginPath();
+    ctx.ellipse(centerX, centerY, radius * 0.22, radius * 0.14, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+}
+function displayGoldenApple(){
+    if(!food[2].active) return;
+    let centerX = Xoffset + food[2].x * gridSize + gridSize/2;
+    let centerY = Yoffset + food[2].y * gridSize + gridSize/2;
+
+    let pulseSpeed = food[2].timer < 2000 ? 0.03 : 0.005;
+    let pulse = Math.sin(time * pulseSpeed) * 0.1;  
+    let radius = gridSize * (0.4 + pulse);
+
+    ctx.save();
+    
+    ctx.shadowBlur=20;
+
+    // Apple body
+    ctx.shadowColor = `hsl(${time / 10 % 360}, 100%, 60%)`;
+    ctx.fillStyle = "gold";
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Stem
+    ctx.fillStyle = "#5a3d1e";
+    ctx.fillRect(centerX - 2, centerY - radius - 5, 4, 8);
+
+    // Leaf
+    ctx.fillStyle = "#2ecc71";
+    ctx.beginPath();
+    ctx.ellipse(centerX + 5, centerY - radius - 5, 6, 3, Math.PI/4, 0, Math.PI*2);
+    ctx.fill();
+
+    ctx.restore();
+}
+function displayFood(){
+    displayApple();
+    displayPie();
+    displayGoldenApple();
 }
 
 //showing score
@@ -119,7 +197,24 @@ function displaySnake(progress){
         let b = Math.floor(snakeColor.b*(0.5 + 0.5*t));
 
         if(!gameMode.ghost) ctx.shadowBlur=20;
-        ctx.shadowColor = `rgb(${r}, ${g}, ${b})`;
+
+        if (isEnchanted) {
+            // blinks rapidly to show enchanted mode is on
+            if (Math.floor(time / 175) % 2 === 0) {
+                r = Math.floor(242*(1+ 0.5*t));
+                g = Math.floor(203*(1 + 0.5*t));
+                b = Math.floor(4*(1+ 0.5*t));
+                ctx.shadowColor = "gold";
+            } else {
+                r = Math.floor(255*(0.8 + 0.5*t));
+                g = Math.floor(255*(0.8 + 0.5*t));
+                b = Math.floor(255*(0.8+ 0.5*t));
+                ctx.shadowColor = "white";
+            }
+        } 
+        else{
+            ctx.shadowColor = `rgb(${r}, ${g}, ${b})`;
+        }
         ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
 
         ctx.beginPath();
@@ -138,7 +233,7 @@ function displaySnake(progress){
 function displayGame(){
     // Draw everything
     displayBoard();
-    displayFood(food);
+    displayFood();
     displayScore(score);
     //pause, resume and quit buttons
     if(gameState === "playing"){
