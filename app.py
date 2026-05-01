@@ -37,7 +37,7 @@ def save_score():
         return jsonify({"Error" : "Score must be integer"}), 400
     if not isinstance(gridSize, (int, float)):
         return jsonify({"Error" : "GridSize must be integer"}), 400
-    if cause not in ["WALL", "SELF"]:
+    if cause not in ["WALL", "SELF", "QUIT"]:
         return jsonify({"Error" : "Invalid Cause of death"}), 400
     if not isinstance(duration, (int, float)):
         return jsonify({"Error" : "Duration must be integer"}), 400
